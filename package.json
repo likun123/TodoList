@@ -1,0 +1,20 @@
+{
+  "name": "todolist",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "node-sass": "^5.0.0",
+    "style-loader": "^2.0.0",
+    "vue": "^3.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.2.1",
+    "@vue/compiler-sfc": "^3.0.5",
+    "sass-loader": "^7.3.1",
+    "vite": "^2.1.5"
+  }
+}
