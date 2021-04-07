@@ -1,62 +1,67 @@
 <template>
-  <header>
-    <section class="center header-bg">
-      <h1>ToDoList</h1>
-      <input
-        placeholder="添加Todos"
-        class="addItem"
-        @keyup.enter="addItem"
-        type="text"
-        v-model="currentValue"
-      />
-    </section>
-  </header>
-  <div class="tool-tips text-align-left">
-    <div class="check-all">
-      <input
-        @change="selectAll($event)"
-        type="checkbox"
-        name="checkall"
-        id="checkall"
-      />
-      <label for="checkall">全选</label>
+  <div>
+    <header>
+      <section class="center header-bg">
+        <h1>ToDoList</h1>
+        <input
+          placeholder="添加Todos"
+          class="addItem"
+          @keyup.enter="addItem"
+          type="text"
+          v-model="currentValue"
+        />
+      </section>
+    </header>
+    <div class="tool-tips text-align-left">
+      <div class="check-all">
+        <input
+          @change="selectAll($event)"
+          type="checkbox"
+          name="checkall"
+          id="checkall"
+        />
+        <label for="checkall">全选</label>
+      </div>
+      <div
+        class="remove-all"
+        @click="deleteChecked"
+      >删除勾选</div>
     </div>
-    <div class="remove-all" @click="deleteChecked">删除勾选</div>
+    <section class="center">
+      正在进行 <span class="fr nums">{{ notFinishedNum }}</span>
+    </section>
+    <ul>
+      <todo-item
+        v-for="item in notFinishedItem"
+        :key="item.id"
+        :item="item"
+        draggable="true"
+        @dragstart="dragStart(item)"
+        @dragend="dragEnd(item)"
+        @dragenter.prevent="dragEnter(item)"
+        @dragover.prevent="dragOver"
+        @keyup.enter="updateItem(item)"
+        @removeItem="removeItem(item)"
+      />
+    </ul>
+    <section class="center">
+      已经完成 <span class="fr nums">{{ finishedNum }}</span>
+    </section>
+    <ul class="finished">
+      <todo-item
+        v-for="item in finishedItem"
+        :key="item.id"
+        :item="item"
+        draggable="true"
+        @dragstart="dragStart(item)"
+        @dragend="dragEnd(item)"
+        @dragenter.prevent="dragEnter(item)"
+        @dragover.prevent="dragOver"
+        @keyup.enter="updateItem(item)"
+        @removeItem="removeItem(item)"
+      />
+    </ul>
   </div>
-  <section class="center">
-    正在进行 <span class="fr nums">{{ notFinishedNum }}</span>
-  </section>
-  <ul>
-    <todo-item
-      v-for="item in notFinishedItem"
-      :key="item.id"
-      :item="item"
-      draggable="true"
-      @dragstart="dragStart(item)"
-      @dragend="dragEnd(item)"
-      @dragenter.prevent="dragEnter(item)"
-      @dragover.prevent="dragOver"
-      @keyup.enter="updateItem(item)"
-      @removeItem="removeItem(item)"
-    />
-  </ul>
-  <section class="center">
-    已经完成 <span class="fr nums">{{ finishedNum }}</span>
-  </section>
-  <ul class="finished">
-    <todo-item
-      v-for="item in finishedItem"
-      :key="item.id"
-      :item="item"
-      draggable="true"
-      @dragstart="dragStart(item)"
-      @dragend="dragEnd(item)"
-      @dragenter.prevent="dragEnter(item)"
-      @dragover.prevent="dragOver"
-      @keyup.enter="updateItem(item)"
-      @removeItem="removeItem(item)"
-    />
-  </ul>
 </template>
 <script>
 import TodoItem from "./TodoItem.vue";
@@ -241,7 +246,11 @@ header input {
 .active {
   text-decoration: line-through;
 }
-
+ul{
+  width: 620px;
+  margin: 0 auto;
+  list-style-type: none;
+}
 h1,
 .addItem {
   display: inline-block;
@@ -299,5 +308,6 @@ h1 {
   background-color: #fff;
   color: #000;
   border-radius: 50%;
+  text-align: center;
 }
 </style>

@@ -9,3 +9,8 @@
 6.全选
 7.计算统计
 8.设置session存储数据
+
+# 启动
+npm install 
+
+vue serve src/App.vue

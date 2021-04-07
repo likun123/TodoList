@@ -12,29 +12,25 @@
 </template>
 <script>
 export default {
-    name:"todoItem",
-    props:{
-        item:{
-            type:Object,
-            required:true
-        }
+  name: "todoItem",
+  props: {
+    item: {
+      type: Object,
+      required: true,
     },
-    data(){
-        return{
-
-        }
+  },
+  data() {
+    return {};
+  },
+  methods: {
+    removeItem(item) {
+      this.$emit("removeItem", item);
     },
-    methods:{
-        removeItem(item){
-            this.$emit('removeItem',item);
-        },
-        updateItem(item){
-            this.$emit('updateItem',item)
-        }
-    }
-}
+    updateItem(item) {
+      this.$emit("updateItem", item);
+    },
+  },
+};
 </script>
 <style>
-    
-
 </style>

@@ -1,20 +1,17 @@
 {
-  "name": "todolist",
-  "version": "0.0.0",
+  "name": "todo-list",
+  "version": "0.1.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vue serve src/App.vue",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "node-sass": "^5.0.0",
-    "style-loader": "^2.0.0",
-    "vue": "^3.0.5"
+    "core-js": "^3.6.5",
+    "vue": "^2.6.11"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.2.1",
-    "@vue/compiler-sfc": "^3.0.5",
-    "sass-loader": "^7.3.1",
-    "vite": "^2.1.5"
+    "@vue/cli-service": "^4.5.0",
+    "vue-template-compiler": "^2.6.11"
   }
 }

@@ -1,10 +1,22 @@
 <template>
-  <TodoList />
+  <div>
+    <TodoList />
+  </div>
 </template>
 
-<script setup>
+<script>
 import TodoList from './components/TodoList.vue'
+export default {
+  name: 'App',
+  data () {
+    return {
 
+    }
+  },
+  components: {
+    TodoList
+  }
+}
 </script>
 
 <style>
@@ -15,7 +27,7 @@ import TodoList from './components/TodoList.vue'
   text-align: center;
   color: #2c3e50;
 }
-*{
+* {
   margin: 0;
   padding: 0;
 }
