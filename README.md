@@ -10,6 +10,9 @@
 7.计算统计
 8.设置session存储数据
 
+# TODO
+1.修改排版
+2.保存为菜单(ctrl+s)
 # 启动
 npm install 
 

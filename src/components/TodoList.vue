@@ -12,6 +12,15 @@
         />
       </section>
     </header>
+    <aside class="left-menu">
+      <ul>
+        <li
+        @click="checkMenu(item.menuname)"
+          v-for="item in newTodoList"
+          :key="item.id"
+        >{{item.menuname}}</li>
+      </ul>
+    </aside>
     <div class="tool-tips text-align-left">
       <div class="check-all">
         <input
@@ -26,6 +35,10 @@
         class="remove-all"
         @click="deleteChecked"
       >删除勾选</div>
+      <div
+        @click="saveToMenu"
+        class="save-to-menu"
+      >存储为菜单</div>
     </div>
     <section class="center">
       正在进行 <span class="fr nums">{{ notFinishedNum }}</span>
@@ -74,6 +87,7 @@ export default {
     return {
       currentValue: "",
       dragIndex: 0,
+      newTodoList: [],
       todoList: [
         {
           id: 1,
@@ -83,23 +97,8 @@ export default {
         {
           id: 4,
           text: "q",
-          isFinished: false,
-        },
-        {
-          id: 5,
-          text: "qqqq",
-          isFinished: false,
-        },
-        {
-          id: 2,
-          text: "b",
           isFinished: true,
-        },
-        {
-          id: 3,
-          text: "c",
-          isFinished: true,
-        },
+        }
       ],
     };
   },
@@ -136,13 +135,12 @@ export default {
           todo.text = item.text;
         }
       });
-      console.log(this.todoList);
     },
     dragStart(item) {
       // 存储移动元素
       this.moveItem = item;
     },
-    dragEnd(item) {
+    dragEnd() {
       /* 拷贝源数组 */
       let copyArr = this.todoList;
       /* 拷贝原数组的拷贝 */
@@ -164,6 +162,30 @@ export default {
     dragEnter(item) {
       this.insertItem = item;
     },
+    saveToMenu() {
+      /* 存储为某个文件夹 */
+      let menuname = window.prompt("请在此输入菜单名称", "");
+      if (menuname) {
+        let addObject = {
+          menuname: menuname,
+          data: this.todoList,
+        };
+        this.newTodoList = [addObject, ...this.newTodoList];
+      }
+
+      console.log(this.newTodoList);
+    },
+    checkMenu(menuname){
+      let a = this.newTodoList.filter((item)=>{
+        if(item.menuname === menuname){
+           return true
+        }
+      })
+      console.log(this.newTodoList);
+      console.log(this.todoList);
+      this.todoList = a[0].data
+    
+    }
   },
   computed: {
     notFinishedNum: function () {
@@ -195,7 +217,7 @@ export default {
   watch: {
     todoList: {
       // 深度监听
-      handler(val, oldVal) {
+      handler(val) {
         localStorage.setItem("todoList", JSON.stringify(val));
       },
       deep: true,
@@ -203,7 +225,8 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="scss">
+// common
 .text-align-left {
   text-align: left;
 }
@@ -246,7 +269,7 @@ header input {
 .active {
   text-decoration: line-through;
 }
-ul{
+ul {
   width: 620px;
   margin: 0 auto;
   list-style-type: none;
@@ -282,11 +305,13 @@ h1 {
   width: 620px;
   margin: 10px auto;
 }
+
 .remove-all,
 .check-all {
   margin-right: 10px;
 }
-.remove-all {
+.remove-all,
+.save-to-menu {
   display: inline-block;
   padding: 5px 10px;
   border-radius: 5px;
@@ -296,7 +321,8 @@ h1 {
 .check-all {
   display: inline-block;
 }
-.remove-all:hover {
+.remove-all:hover,
+.save-to-menu:hover {
   background-color: turquoise;
   color: #fff;
   cursor: pointer;
@@ -310,4 +336,12 @@ h1 {
   border-radius: 50%;
   text-align: center;
 }
+.left-menu{
+  width: 200px;
+    position: absolute;
+    top: 200px;
+    left: 200px;
+
+}
+
 </style>
