@@ -6,32 +6,42 @@
           @click="checkMenu(item.id)"
           v-for="item in todoList"
           :key="item.id"
-          :class="{ active : todoList.length > 0 ? item.id === currentMenuId : false }"
+          :class="{
+            active: todoList.length > 0 ? item.id === currentMenuId : false,
+          }"
         >
-          {{item.menuname}}
+          {{ item.menuname }}
 
           <span class="fr">
-            {{item.data.filter(item=>{
-          return item.isFinished === false
-        }).length}}
+            {{
+              item.data.filter((item) => {
+                return item.isFinished === false;
+              }).length
+            }}
           </span>
         </li>
-        <li
-          class="add-menu-btn"
-          @click="addMenu"
-        >+ 新增</li>
+        <li class="add-menu-btn" @click="addMenu('newTodoList')">+ 新增</li>
       </ul>
     </aside>
     <section class="current-todolist">
       <header>
-        <!-- <h1>ToDoList</h1> -->
         <div class="current-todo-info">
           <h2>
-            {{currentMenu}}
+            <input
+              class="current-menu"
+              type="text"
+              v-model="currentMenu"
+              @change="changeMenuName"
+            />
             <span class="current-todo-num">{{ notFinishedNum }}</span>
             <div class="nav-tools fr">
-              <span @click="isLocked">locked</span>
-              <button @click="removeMenu">X</button>
+              <span
+                class="is-locked"
+                @click="isLocked"
+                v-bind:class="{ active: currentLocked }"
+              >
+              </span>
+              <button class="remove-menu" @click="removeMenu">X</button>
             </div>
           </h2>
           <input
@@ -41,7 +51,6 @@
             type="text"
             v-model="currentValue"
           />
-
         </div>
       </header>
       <main>
@@ -55,10 +64,7 @@
             />
             <label for="checkall">全选</label>
           </div>
-          <div
-            class="remove-all btn"
-            @click="deleteChecked"
-          >删除勾选</div>
+          <div class="remove-all btn" @click="deleteChecked">删除勾选</div>
         </div>
         <section class="center">
           正在进行 <span class="fr nums">{{ notFinishedNum }}</span>
@@ -68,12 +74,14 @@
             v-for="item in notFinishedItem"
             :key="item.id"
             :item="item"
+            :isLocked="currentLocked"
             draggable="true"
             @dragstart="dragstart(item)"
             @dragenter="dragEnter(item)"
             @dragover="dragOver"
             @dragend="dragEnd(item)"
             @removeItem="removeItem(item)"
+            @isLockedSubItem="isLockedSubItem(item)"
           />
         </ul>
         <section class="center">
@@ -84,12 +92,14 @@
             v-for="item in finishedItem"
             :key="item.id"
             :item="item"
+            :isLocked="currentLocked"
             draggable="true"
             @dragstart="dragstart(item)"
             @dragenter="dragEnter(item)"
             @dragover="dragOver"
             @dragend="dragEnd(item)"
             @removeItem="removeItem(item)"
+            @isLockedSubItem="isLockedSubItem(item)"
           />
         </ul>
       </main>
@@ -110,7 +120,27 @@ export default {
       currentTodo: [],
       currentMenu: "",
       currentMenuId: "",
+      currentLocked: false,
       todoList: [],
+    };
+  },
+  mounted() {
+    let _this = this;
+    // 快捷键 ctrl+s保存菜单
+    document.onkeydown = function (e) {
+      let evn = e || event;
+      let key = evn.keyCode || evn.which || evn.charCode;
+      if (key == 83 && evn.ctrlKey) {
+        evn.preventDefault(); //关闭浏览器快捷键
+        let menuname = _this.currentMenu
+          ? _this.currentMenu
+          : prompt("请输入菜单名称");
+        if (menuname) {
+          console.log(this);
+          _this.addMenu(menuname);
+          // _this.currentMenu=''
+        }
+      }
     };
   },
   methods: {
@@ -191,13 +221,14 @@ export default {
       this.currentTodo = checkMenu.data;
       this.currentMenuId = checkMenu.id;
       this.currentMenu = checkMenu.menuname;
+      this.currentLocked = checkMenu.isLocked;
     },
-    addMenu() {
+    addMenu(menuname) {
       this.todoList.push({
         id: this.genID(9),
-        menuname: "newTodoList",
+        menuname: menuname,
         data: [],
-        islocked: false,
+        isLocked: false,
       });
       let lastIndex = this.todoList.length - 1;
       // console.log(this.todoList[lastIndex].id);
@@ -205,8 +236,45 @@ export default {
       this.currentMenuId = this.todoList[lastIndex].id;
       this.currentMenu = this.todoList[lastIndex].menuname;
     },
-    removeMenu() {},
-    isLocked() {},
+    removeMenu() {
+      if (this.currentMenuId) {
+        this.todoList = this.todoList.filter((item) => {
+          console.log(item.id + "---" + this.currentMenuId);
+          return item.id !== this.currentMenuId;
+        });
+        this.currentMenuId = this.todoList.length ? this.todoList[0].id : "";
+        this.currentMenu = this.todoList.length
+          ? this.todoList[0].menuname
+          : "";
+      }
+    },
+    isLocked() {
+      if (this.currentMenuId) {
+        this.todoList.map((item) => {
+          if (item.id === this.currentMenuId) {
+            item.isLocked = !item.isLocked;
+            this.currentLocked = item.isLocked;
+          }
+        });
+      }
+    },
+    isLockedSubItem(curItem){
+      console.log(curItem);
+      this.currentTodo.map(item=>{
+        if(item.id === curItem.id){
+          item.isLocked = !item.isLocked
+        }
+      })
+    },
+    changeMenuName() {
+      if (this.currentMenuId) {
+        this.todoList.map((item) => {
+          if (item.id === this.currentMenuId) {
+            item.menuname = this.currentMenu;
+          }
+        });
+      }
+    },
   },
   computed: {
     notFinishedNum() {
@@ -301,11 +369,14 @@ ul {
 .current-todolist {
   flex: 1;
   margin: 0 10px;
+  height: 96vh;
+  overflow: auto;
   .current-todo-info {
     input {
       width: 100%;
       border: none;
       background: transparent;
+      font-size: 20px;
       &:focus {
         border: none;
         outline: none;
@@ -393,7 +464,25 @@ main {
 }
 .finished {
   .active {
-    text-decoration: line-through;
+    input {
+      text-decoration: line-through;
+    }
+  }
+}
+.remove-menu {
+  width: 20px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.is-locked {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  background: url(../assets/unlocked.png) no-repeat center;
+  &.active {
+    background-image: url(../assets/locked.png);
   }
 }
 </style>
